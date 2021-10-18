@@ -5,27 +5,17 @@ import (
 	"go.uber.org/zap"
 	"stonks/internal/config"
 
-	ec "stonks/internal/controllers/market/earnings"
-	isc "stonks/internal/controllers/market/income_statement"
-	ovc "stonks/internal/controllers/market/overview"
+	"stonks/internal/controllers/market/details"
 	nc "stonks/internal/controllers/news"
-
-	er "stonks/internal/repos/earnings"
-	isr "stonks/internal/repos/income_statement"
+	"stonks/internal/repos/details"
 	nr "stonks/internal/repos/news"
-	or "stonks/internal/repos/overview"
-
-	es "stonks/internal/services/earnings"
-	iss "stonks/internal/services/income_statement"
+	"stonks/internal/services/details"
 	ns "stonks/internal/services/news"
-	ovs "stonks/internal/services/overview"
 )
 
 type IInjector interface {
 	InjectNewsController() nc.NewsControllers
-	InjectOverviewController() ovc.OverviewControllers
-	InjectEarningsController() ec.EarningsControllers
-	InjectIncomeStatementController() isc.IncomeStatementControllers
+	InjectDetailsController() details.CompanyDetailsControllers
 }
 
 var env *environment
@@ -46,34 +36,12 @@ func (e *environment) InjectNewsController() nc.NewsControllers {
 	}
 }
 
-func (e *environment) InjectOverviewController() ovc.OverviewControllers {
-	return ovc.OverviewControllers{
+func (e *environment) InjectDetailsController() details.CompanyDetailsControllers {
+	return details.CompanyDetailsControllers{
 		Log: e.logger,
-		OverviewService: &ovs.OverviewService{
-			OverviewRepo: &or.OverviewRepo{},
-			Config:       e.cfg,
-		},
-		Validator: validator.New(),
-	}
-}
-
-func (e *environment) InjectEarningsController() ec.EarningsControllers {
-	return ec.EarningsControllers{
-		Log: e.logger,
-		EarningsService: &es.EarningsService{
-			EarningsRepo: &er.EarningsRepo{},
-			Config:       e.cfg,
-		},
-		Validator: validator.New(),
-	}
-}
-
-func (e *environment) InjectIncomeStatementController() isc.IncomeStatementControllers {
-	return isc.IncomeStatementControllers{
-		Log: e.logger,
-		IncomeStatementService: &iss.IncomeStatementService{
-			IncomeStatementRepo: &isr.IncomeStatementRepo{},
-			Config:              e.cfg,
+		CompanyDetailsService: &details_service.CompanyDetailsService{
+			DetailsRepo: &details_repo.CompanyDetailsRepo{},
+			Config:      e.cfg,
 		},
 		Validator: validator.New(),
 	}
