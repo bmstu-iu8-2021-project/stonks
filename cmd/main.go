@@ -50,12 +50,16 @@ func init() {
 func main() {
 	injector, _ := infrastructure.Injector(log, cfg)
 	newsController := injector.InjectNewsController()
+	overviewController := injector.InjectDetailsController()
+	stockController := injector.InjectStockController()
 
 	router := gin.Default()
 
 	v1 := router.Group("/stonks/v1")
 	{
 		v1.GET("/news", newsController.GetNews)
+		v1.GET("/details", overviewController.GetCompanyDetails)
+		v1.GET("/stock",stockController.GetStock)
 	}
 
 	router.Run()
